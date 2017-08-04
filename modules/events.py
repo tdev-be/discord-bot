@@ -1,11 +1,7 @@
 from discord.ext import commands
-from collections import Counter
-
-
 import logging
 import discord
 import datetime
-import traceback
 import psutil
 
 log = logging.getLogger(__name__)

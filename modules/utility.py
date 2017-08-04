@@ -5,7 +5,6 @@ from utils import checks
 import logging
 import discord
 import datetime
-import traceback
 import psutil
 
 log = logging.getLogger(__name__)

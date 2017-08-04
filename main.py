@@ -1,13 +1,8 @@
 from discord.ext import commands
-import discord
 import datetime
 import logging
-import aiohttp
-import modules
 import config
 import psycopg2
-from utils.db import *
-from pony.orm import *
 
 description = """
 """
@@ -17,8 +12,7 @@ log = logging.getLogger(__name__)
 def _prefix_callable(bot, msg):
     user_id = bot.user.id
     base = [f'<@!{user_id}> ', f'<@{user_id}> ', '!']
-    base.append('!')
-    base.append('?')
+    base.append(config.prefix)
     return base
 
 class Robot(commands.AutoShardedBot):

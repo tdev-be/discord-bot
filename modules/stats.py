@@ -1,6 +1,6 @@
 from discord.ext import commands
-import logging
 import discord
+import logging
 import datetime
 import psutil
 from utils.db.datatype import *
@@ -20,13 +20,32 @@ class stats:
         afterGame = after.game
         if beforeGame != afterGame:
             if beforeGame is None:
-                print(before.display_name+ ' start playing ' + afterGame.name )
-                log_game('server', after._user.name, afterGame.name, datetime.now())
+                log_game(after.guild.name, after._user.name, afterGame.name, datetime.now())
             elif afterGame is None:
-                #after.send('stop playing')
-                print(before.display_name+ ' stopped playing ' + beforeGame.name  )
+                pass
             else:
-                log_game('server', after._user.name, afterGame.name, datetime.now())
+                log_game(after.guild.name, after._user.name, afterGame.name, datetime.now())
+
+    @commands.group()
+    async def stat(self, ctx):
+        '''Get stats from the server'''
+        if ctx.invoked_subcommand is None:
+            await ctx.send('Invalid stat command passed...')
+
+    @stat.command(hidden=False)
+    async def game(self, ctx):
+        '''Stats per game on thi server'''
+        list = stats_per_game(ctx.guild.name, ctx)
+        for (game, count)  in list:
+            await ctx.send (f"{game} was used {count} times")
+
+    @stat.command(hidden=False)
+    async def user(self, ctx):
+        '''Stats per user and per game on this server'''
+        list = stats_per_user(ctx.guild.name, ctx)
+        for (user, game, count) in list:
+            await ctx.send(f"{user} played \"{game}\" {count} times")
+
 
 async def on_error(self, event, *args, **kwargs):
     e = discord.Embed(title='Event Error', colour=0xa32952)
