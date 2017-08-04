@@ -1,2 +1,5 @@
 .idea
 config.py
+*__pychache__/*
+
+utils/db/database.db
