@@ -1,10 +1,10 @@
 from discord.ext import commands
-from collections import Counter
 import logging
 import discord
 import datetime
-import traceback
 import psutil
+from utils.db.datatype import *
+from pony.orm import *
 
 log = logging.getLogger(__name__)
 
@@ -29,26 +29,20 @@ class funny:
     @commands.command(hidden=True)
     async def test(self, ctx):
         '''Give me a pizza'''
-        await ctx.send_message(self.bot.default_channel, 'test ok !')
+        await ctx.send('test ok !')
 
-    async def on_member_update(self, before: discord.Member, after: discord.Member):
-        beforeGame = before.game
-        afterGame = after.game
-        if beforeGame != afterGame:
-            if beforeGame is None:
-                #self.bot.start_private_message(after._user)
-                #await self.bot.send_message(self.bot.dafult_channel,'start playing')
-                await print(before.display_name+ ' start playing ' + afterGame.name )
-            elif afterGame is None:
-                #after.send('stop playing')
-                await print(before.display_name+ ' stopped playing ' + beforeGame.name  )
-            else:
-                #after.send('changed game')
-                await print(before.display_name+ ' changed game for ' + afterGame.name  )
+    @commands.command(hidden=True)
+    async def read(self, ctx):
+        '''Give me a pizza'''
+        games = played_game_repository().read()
+        for g in games:
+            print(g.game)
+            await ctx.send(f"game : {g.game}")
 
     async def on_message(self, message: discord.Message):
-        print(f'recu "{message.content}" sur #{message.channel}')
-        print(message.channel.guild)
+        pass
+        #print(f'recu "{message.content}" sur #{message.channel}')
+        #print(message.channel.guild)
         #print(self.bot.send_message)
         #msg = await self.bot.send_message(message.channel, 'ok')
 

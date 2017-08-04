@@ -6,4 +6,4 @@ click
 parsedatetime
 lru_dict
 python-dateutil
-psycopg2
+pony

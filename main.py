@@ -6,6 +6,8 @@ import aiohttp
 import modules
 import config
 import psycopg2
+from utils.db import *
+from pony.orm import *
 
 description = """
 """
@@ -27,6 +29,7 @@ class Robot(commands.AutoShardedBot):
         self.load_extension('modules.utility')
         self.load_extension('modules.funny')
         self.load_extension('modules.events')
+        self.load_extension('modules.stats')
 
         self.con = psycopg2.connect(config.postgresql)
 
