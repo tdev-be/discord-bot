@@ -1,10 +1,9 @@
 from discord.ext import commands
-import logging
 import discord
+import logging
 import datetime
 import psutil
 from utils.db.datatype import *
-from pony.orm import *
 
 log = logging.getLogger(__name__)
 

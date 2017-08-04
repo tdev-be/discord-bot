@@ -21,4 +21,7 @@ client_id   = '' # your bot's client ID
 token = '' # your bot's token
 bots_key = '' # your key on bots.discord.pw
 postgresql = 'postgresql://user:password@host/database' # your postgresql info from above
+
+prefix= '+'
+sql_debug=False
 ```
