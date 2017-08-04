@@ -2,7 +2,6 @@ from discord.ext import commands
 import datetime
 import logging
 import config
-import psycopg2
 
 description = """
 """
@@ -25,7 +24,6 @@ class Robot(commands.AutoShardedBot):
         self.load_extension('modules.events')
         self.load_extension('modules.stats')
 
-        self.con = psycopg2.connect(config.postgresql)
 
         self.client_id = config.client_id
 
