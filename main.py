@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 def _prefix_callable(bot, msg):
     user_id = bot.user.id
-    base = [f'<@!{user_id}> ', f'<@{user_id}> ', '!']
+    base = [f'<@!{user_id}> ', f'<@{user_id}> ', '+']
     base.append(config.prefix)
     return base
 

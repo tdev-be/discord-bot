@@ -22,8 +22,9 @@ class stats:
             if beforeGame is None:
                 log_game(after.guild.name, after._user.name, afterGame.name, datetime.now())
             elif afterGame is None:
-                pass
+                log_end_game(before.guild.name, before._user.name, beforeGame.name, datetime.now())
             else:
+                log_end_game(before.guild.name, before._user.name, beforeGame.name, datetime.now())
                 log_game(after.guild.name, after._user.name, afterGame.name, datetime.now())
 
     @commands.group()

@@ -1,6 +1,7 @@
 from discord.ext import commands
 from collections import Counter
 from utils import checks
+from utils.db.datatype import *
 
 import logging
 import discord
@@ -44,6 +45,17 @@ class utility:
     async def hello(self, ctx):
         '''Say Hello World'''
         await ctx.send(f'Hello World !')
+
+
+    @commands.command(hidden=True)
+    async def afk(self, ctx):
+        '''Say Hello World'''
+        reason = "Afk"
+        if len(ctx.message.content.split(' ')[1:]):
+            reason = " ".join(ctx.message.content.split(' ')[1:])
+
+        afk_reason(ctx.guild.name, ctx.author.name, reason)
+        await ctx.send(f"{ctx.author.name} is afk :\"{reason}\"")
 
     @commands.command()
     @commands.guild_only()
