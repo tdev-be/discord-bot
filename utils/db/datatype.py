@@ -10,6 +10,19 @@ class Played_game(db.Entity):
     user = Required(str)
     game = Required(str)
     date_from = Required(datetime)
+    date_to = Optional(datetime)
+
+class Afk(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    server = Required(str)
+    user = Required(str)
+    reason = Optional(str)
+
+@db_session
+def afk_reason( server, user, message="Afk"):
+    Afk(server=server,user=user, reason=message)
+    commit()
+
 
 class played_game_repository():
     @db_session
@@ -26,6 +39,11 @@ db.generate_mapping(create_tables=True)
 @db_session
 def log_game(server: str, user:str,game:str,date_from:datetime):
     Played_game(server=server,user=user, game=game, date_from=date_from)
+    commit()
+@db_session
+def log_end_game(server: str, user:str,game:str,date_to:datetime):
+    played = select((p) for p in Played_game if server == p.server and user == user and game == game).first()
+    played.date_to = date_to
     commit()
 
 @db_session
