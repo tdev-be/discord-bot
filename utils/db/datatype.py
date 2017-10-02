@@ -43,7 +43,10 @@ def log_game(server: str, user:str,game:str,date_from:datetime):
     commit()
 @db_session
 def log_end_game(server: str, user:str,game:str,date_to:datetime):
-    played = select((p) for p in Played_game if server == p.server and user == user and game == game and p.date_to is None).first()
+    played = select((p) for p in Played_game if server == p.server and user == user and game == game and p.date_to is None)
+    if len(played) == 0:
+        return;
+    played = played.first()
     played.date_to = date_to
     print((played.date_to - played.date_from).total_seconds())
     played.time = (played.date_to - played.date_from).total_seconds()
