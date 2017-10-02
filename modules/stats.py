@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import logging
 import datetime
+from datetime import timedelta
 import psutil
 from utils.db.datatype import *
 
@@ -20,10 +21,13 @@ class stats:
         afterGame = after.game
         if beforeGame != afterGame:
             if beforeGame is None:
+                print('start game')
                 log_game(after.guild.name, after._user.name, afterGame.name, datetime.now())
             elif afterGame is None:
+                print ('stop game')
                 log_end_game(before.guild.name, before._user.name, beforeGame.name, datetime.now())
             else:
+                print('change game')
                 log_end_game(before.guild.name, before._user.name, beforeGame.name, datetime.now())
                 log_game(after.guild.name, after._user.name, afterGame.name, datetime.now())
 
@@ -34,19 +38,31 @@ class stats:
             await ctx.send('Invalid stat command passed...')
 
     @stat.command(hidden=False)
-    async def game(self, ctx):
+    async def game(self, ctx, limit=100):
         '''Stats per game on thi server'''
         list = stats_per_game(ctx.guild.name, ctx)
-        for (game, count)  in list:
-            await ctx.send (f"{game} was used {count} times")
+        values = ''
+        for (game, count, time)  in list[0:limit]:
+            values += f"**{game}** was used **{count}** times (total {timedelta(seconds=time)})\n"
+            print(timedelta(seconds=time))
+
+        e = discord.Embed(title='Stats per game played', url=None, colour=0xa83e4b)
+        e.description = ''
+        e.add_field(name=f'**Top {limit}**', value=values)
+        await ctx.send(embed=e)
 
     @stat.command(hidden=False)
-    async def user(self, ctx):
+    async def user(self, ctx, limit=100):
         '''Stats per user and per game on this server'''
         list = stats_per_user(ctx.guild.name, ctx)
-        for (user, game, count) in list:
-            await ctx.send(f"{user} played \"{game}\" {count} times")
+        values = ''
+        for (user, game, count, time) in list[0:limit]:
+            values += f"*{user}* played \"**{game}**\" {count} times (total : {timedelta(seconds=time)})\n"
 
+        e = discord.Embed(title='Stats per game played by user', url=None, colour=0xa83e4b)
+        e.description = ''
+        e.add_field(name=f'**Top {limit}**', value=values)
+        await ctx.send(embed=e)
 
 async def on_error(self, event, *args, **kwargs):
     e = discord.Embed(title='Event Error', colour=0xa32952)
