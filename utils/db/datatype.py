@@ -1,5 +1,5 @@
 from pony.orm import *
-from datetime import datetime
+from datetime import datetime, time
 import config
 db=Database()
 sql_debug(config.sql_debug)
@@ -11,6 +11,7 @@ class Played_game(db.Entity):
     game = Required(str)
     date_from = Required(datetime)
     date_to = Optional(datetime)
+    time = Optional(float)
 
 class Afk(db.Entity):
     id = PrimaryKey(int, auto=True)
@@ -42,13 +43,15 @@ def log_game(server: str, user:str,game:str,date_from:datetime):
     commit()
 @db_session
 def log_end_game(server: str, user:str,game:str,date_to:datetime):
-    played = select((p) for p in Played_game if server == p.server and user == user and game == game).first()
+    played = select((p) for p in Played_game if server == p.server and user == user and game == game and p.date_to is None).first()
     played.date_to = date_to
+    print((played.date_to - played.date_from).total_seconds())
+    played.time = (played.date_to - played.date_from).total_seconds()
     commit()
 
 @db_session
 def stats_per_game(server: str, ctx):
-    games = select ((p.game, count(p)) for p in Played_game if server == p.server).order_by(-2)
+    games = select ((p.game, count(p), sum(p.time)) for p in Played_game if server == p.server).order_by(-2)
     list=[]
     for game in games:
         list.append(game)
@@ -56,7 +59,7 @@ def stats_per_game(server: str, ctx):
 
 @db_session
 def stats_per_user(server: str, ctx):
-    games = select ((p.user,p.game, count(p)) for p in Played_game if server == p.server).order_by(-3,-1)
+    games = select ((p.user,p.game, count(p), sum(p.time)) for p in Played_game if server == p.server).order_by(-3,-1)
     list=[]
     for game in games:
         list.append(game)
