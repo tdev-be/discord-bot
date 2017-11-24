@@ -8,9 +8,10 @@ import discord
 import datetime
 import psutil
 
-log = logging.getLogger(__name__)
+from config import LOGGING_CHANNEL
 
-LOGGING_CHANNEL = 309632009427222529
+client = discord.Client()
+log = logging.getLogger(__name__)
 
 class ActionReason(commands.Converter):
     async def convert(self, ctx, argument):
@@ -41,21 +42,32 @@ class utility:
         self.bot = bot
         self.process = psutil.Process()
 
-    @commands.command(hidden=True)
-    async def hello(self, ctx):
-        '''Say Hello World'''
-        await ctx.send(f'Hello World !')
+    @commands.command(hidden=False)
+    async def ping(self, ctx):
+        await ctx.send('pong !')
 
+    @commands.command(hidden=False)
+    async def back(self, ctx):
+        '''Set an afk reason'''
+        afk_back(str(ctx.guild.id), ctx.author.name)
+        await ctx.send(f"{ctx.author.mention} is back !")
 
-    @commands.command(hidden=True)
+    @commands.command(hidden=False)
     async def afk(self, ctx):
-        '''Say Hello World'''
         reason = "Afk"
         if len(ctx.message.content.split(' ')[1:]):
             reason = " ".join(ctx.message.content.split(' ')[1:])
-
-        afk_reason(ctx.guild.name, ctx.author.name, reason)
+        afk_reason(str(ctx.guild.id), ctx.author.name, reason)
         await ctx.send(f"{ctx.author.name} is afk :\"{reason}\"")
+
+    @client.event
+    async def on_message(self, message: discord.Message):
+        if message.author == message.guild.me:
+            return
+        for mention in message.mentions:
+            reason = is_afk(message.guild.id, mention.name)
+            if reason:
+               await message.channel.send( f'{mention.name} is AFK : {reason}')
 
     @commands.command()
     @commands.guild_only()
@@ -114,23 +126,6 @@ class utility:
         else:
             await ctx.send(f'Unbanned {member.user} (ID: {member.user.id}).')
 
-    async def _basic_cleanup_strategy(self, ctx, search):
-        count = 0
-        async for msg in ctx.history(limit=search, before=ctx.message):
-            if msg.author == ctx.me:
-                await msg.delete()
-                count += 1
-        return {'Bot': count}
-
-    async def _complex_cleanup_strategy(self, ctx, search):
-        prefixes = tuple('!') # thanks startswith
-
-        def check(m):
-            return m.author == ctx.me or m.content.startswith(prefixes)
-
-        deleted = await ctx.channel.purge(limit=search, check=check, before=ctx.message)
-        return Counter(m.author.display_name for m in deleted)
-
     async def _full_cleanup_strategy(self, ctx, search):
         prefixes = tuple('!') # thanks startswith
 
@@ -156,9 +151,6 @@ class utility:
         You must have Manage Messages permission to use this.
         """
 
-        strategy = self._basic_cleanup_strategy
-        if ctx.me.permissions_in(ctx.channel).manage_messages:
-            strategy = self._complex_cleanup_strategy
         strategy = self._full_cleanup_strategy
 
         spammers = await strategy(ctx, search)
@@ -169,6 +161,7 @@ class utility:
             spammers = sorted(spammers.items(), key=lambda t: t[1], reverse=True)
             messages.extend(f'- **{author}**: {count}' for author, count in spammers)
 
+        await ctx.message.delete()
         await ctx.send('\n'.join(messages), delete_after=10)
 
 async def on_error(self, event, *args, **kwargs):

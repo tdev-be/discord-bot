@@ -5,9 +5,10 @@ import datetime
 import psutil
 from utils.db.datatype import *
 
-log = logging.getLogger(__name__)
+from config import LOGGING_CHANNEL
 
-LOGGING_CHANNEL = 309632009427222529
+log = logging.getLogger(__name__)
+client = discord.Client()
 
 class funny:
 
@@ -16,34 +17,11 @@ class funny:
         self.process = psutil.Process()
 
     @commands.command(hidden=False)
-    async def fun(self, ctx):
-        '''useless'''
-        await ctx.send(f'Funny World !')
-
-    @commands.command(hidden=False)
-    async def pizza(self, ctx):
+    async def pizza(self, ctx, member: discord.Member=None):
         '''Give me a pizza'''
-        await ctx.send(':pizza: Here is your pizza ! :pizza:')
-
-    @commands.command(hidden=True)
-    async def test(self, ctx):
-        '''Give me a pizza'''
-        await ctx.send('test ok !')
-
-    @commands.command(hidden=True)
-    async def read(self, ctx):
-        '''Give me a pizza'''
-        games = played_game_repository().read()
-        for g in games:
-            print(g.game)
-            await ctx.send(f"game : {g.game}")
-
-    async def on_message(self, message: discord.Message):
-        pass
-        #print(f'recu "{message.content}" sur #{message.channel}')
-        #print(message.channel.guild)
-        #print(self.bot.send_message)
-        #msg = await self.bot.send_message(message.channel, 'ok')
+        if member==None:
+            member= ctx.author
+        await ctx.send(f':pizza: Here is your pizza {member.mention}! :pizza:')
 
 async def on_error(self, event, *args, **kwargs):
     e = discord.Embed(title='Event Error', colour=0xa32952)
