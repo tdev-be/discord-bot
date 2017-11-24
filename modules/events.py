@@ -3,10 +3,11 @@ import logging
 import discord
 import datetime
 import psutil
+from config import LOGGING_CHANNEL
 
 log = logging.getLogger(__name__)
+client = discord.Client()
 
-LOGGING_CHANNEL = 309632009427222529
 
 class event:
 
@@ -14,10 +15,10 @@ class event:
         self.bot = bot
         self.process = psutil.Process()
 
-    async def on_member_join(member):
-        server = member.server
-        fmt = 'Welcome {0.mention} to {1.name}!'
-        await bot.send_message(server, fmt.format(member, server))
+    @client.event
+    async def on_member_join(self, member: discord.Member):
+        fmt = 'Welcome {0.mention} to {0.guild} !'
+        await member.send( fmt.format(member))
 
 async def on_error(self, event, *args, **kwargs):
     e = discord.Embed(title='Event Error', colour=0xa32952)
@@ -28,7 +29,7 @@ async def on_error(self, event, *args, **kwargs):
     try:
         await ch.send(embed=e)
     except:
-        pass
+        print(e.description)
 
 def setup(bot):
     bot.add_cog(event(bot))

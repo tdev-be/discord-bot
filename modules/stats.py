@@ -8,7 +8,7 @@ from utils.db.datatype import *
 
 log = logging.getLogger(__name__)
 
-LOGGING_CHANNEL = 309632009427222529
+from config import LOGGING_CHANNEL
 
 class stats:
 
@@ -38,28 +38,71 @@ class stats:
             await ctx.send('Invalid stat command passed...')
 
     @stat.command(hidden=False)
-    async def game(self, ctx, limit=100):
+    async def game(self, ctx, game=None):
+        '''Stats per game on thi server'''
+        if game == None:
+            return
+        try:
+            list = gamestat(ctx.guild.name, game, ctx)
+        except Exception as e:
+            em = discord.Embed(title=None, url=None, colour=0xff0000)
+            em.description = ''
+            em.add_field(name="Error", value=e)
+            await ctx.send(embed=em)
+
+        values = ''
+        for (user, count, time) in list:
+            values += "**{}** played {} times (total {})\n".format(user, count, timedelta(seconds=time))
+
+        e = discord.Embed(title=None, url=None, colour=0x00ff00)
+        e.description = ''
+        e.add_field(name="Stats for {}".format(game), value=values[0:1080])
+        await ctx.send(embed=e)
+
+    @stat.command(hidden=False)
+    async def user(self, ctx, user:discord.Member=None):
+        '''Stats per game on thi server'''
+        if user == None:
+            return
+        try:
+            list = userstat(ctx.guild.name, user._user.name, ctx)
+        except Exception as e:
+            em = discord.Embed(title=None, url=None, colour=0xff0000)
+            em.description = ''
+            em.add_field(name="Error", value=e)
+            await ctx.send(embed=em)
+
+        values = ''
+        for (game, count, time) in list:
+            values += "**{}** played {} times (total {})\n".format(game, count, timedelta(seconds=time))
+
+        e = discord.Embed(title=None, url=None, colour=0x00ff00)
+        e.description = ''
+        e.add_field(name="Stats for {}".format(user._user.name), value=values[0:1080])
+        await ctx.send(embed=e)
+
+    @stat.command(hidden=False)
+    async def topgame(self, ctx, limit=10):
         '''Stats per game on thi server'''
         list = stats_per_game(ctx.guild.name, ctx)
         values = ''
         for (game, count, time)  in list[0:limit]:
             values += f"**{game}** was used **{count}** times (total {timedelta(seconds=time)})\n"
-            print(timedelta(seconds=time))
 
-        e = discord.Embed(title='Stats per game played', url=None, colour=0xa83e4b)
+        e = discord.Embed(title='Stats per game played', url=None, colour=0x00ff00)
         e.description = ''
         e.add_field(name=f'**Top {limit}**', value=values)
         await ctx.send(embed=e)
 
     @stat.command(hidden=False)
-    async def user(self, ctx, limit=100):
+    async def topuser(self, ctx, limit=10):
         '''Stats per user and per game on this server'''
         list = stats_per_user(ctx.guild.name, ctx)
         values = ''
         for (user, game, count, time) in list[0:limit]:
             values += f"*{user}* played \"**{game}**\" {count} times (total : {timedelta(seconds=time)})\n"
 
-        e = discord.Embed(title='Stats per game played by user', url=None, colour=0xa83e4b)
+        e = discord.Embed(title='Stats per game played by user', url=None, colour=0x00ff00)
         e.description = ''
         e.add_field(name=f'**Top {limit}**', value=values)
         await ctx.send(embed=e)

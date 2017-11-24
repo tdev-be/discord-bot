@@ -24,6 +24,18 @@ def afk_reason( server, user, message="Afk"):
     Afk(server=server,user=user, reason=message)
     commit()
 
+@db_session
+def afk_back(server, user):
+    afk = select((a) for a in Afk if server == a.server and user == a.user)
+    afk.delete()
+
+@db_session
+def is_afk(server, user):
+    afk = select((a) for a in Afk if server == a.server and user == a.user)
+    if not afk:
+        return False
+    reason = afk.first().reason
+    return reason
 
 class played_game_repository():
     @db_session
@@ -66,4 +78,24 @@ def stats_per_user(server: str, ctx):
     list=[]
     for game in games:
         list.append(game)
+    return list
+
+@db_session
+def gamestat(server:str, game:str, ctx):
+    games = select ((p.user, count(p), sum(p.time)) for p in Played_game if (server == p.server and game == p.game)).order_by(-3,-1)
+    list=[]
+    for game in games:
+        list.append(game)
+    if len(list)==0:
+        raise Exception("Game {} not found".format(game))
+    return list
+
+@db_session
+def userstat(server:str, user:str, ctx):
+    games = select ((p.game, count(p), sum(p.time)) for p in Played_game if (server == p.server and user == p.user)).order_by(-3,-1)
+    list=[]
+    for game in games:
+        list.append(game)
+    if len(list)==0:
+        raise Exception("user {} not found".format(user))
     return list
