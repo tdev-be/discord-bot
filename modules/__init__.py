@@ -1,1 +1,1 @@
-from . import funny, utility, stats
+from . import funny, utility, stats, rewards
