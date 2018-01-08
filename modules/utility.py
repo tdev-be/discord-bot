@@ -62,6 +62,8 @@ class utility:
 
     @client.event
     async def on_message(self, message: discord.Message):
+        if not message.guild:
+            return
         if message.author == message.guild.me:
             return
         for mention in message.mentions:
@@ -164,6 +166,7 @@ class utility:
         await ctx.message.delete()
         await ctx.send('\n'.join(messages), delete_after=10)
 
+
 async def on_error(self, event, *args, **kwargs):
     e = discord.Embed(title='Event Error', colour=0xa32952)
     e.add_field(name='Event', value=event)
@@ -174,6 +177,7 @@ async def on_error(self, event, *args, **kwargs):
         await ch.send(embed=e)
     except:
         pass
+
 
 def setup(bot):
     if not hasattr(bot, 'command_stats'):
