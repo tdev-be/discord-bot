@@ -19,6 +19,12 @@ class Afk(db.Entity):
     user = Required(str)
     reason = Optional(str)
 
+
+class Group(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    server = Required(str)
+    group = Required(str)
+
 @db_session
 def afk_reason( server, user, message="Afk"):
     Afk(server=server,user=user, reason=message)
@@ -48,6 +54,24 @@ class played_game_repository():
 
 db.bind(provider='sqlite', filename='database.db', create_db=True)
 db.generate_mapping(create_tables=True)
+
+@db_session
+def add_group(server:str, group=str):
+    Group(server=server, group=group)
+    commit()
+
+@db_session
+def remove_group(server:str, group=str):
+    g = select(g for g in Group if server==g.server and group == g.group)
+    g.delete()
+
+@db_session
+def list_group(server:str):
+    groups = select ((g.group) for g in Group if server == g.server)
+    list=[]
+    for group in groups:
+        list.append(group)
+    return list
 
 @db_session
 def log_game(server: str, user:str,game:str,date_from:datetime):
