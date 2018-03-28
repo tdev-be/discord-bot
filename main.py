@@ -28,6 +28,7 @@ class Robot(commands.AutoShardedBot):
         self.load_extension('modules.events')
         self.load_extension('modules.stats')
         self.load_extension('modules.rewards')
+        self.load_extension('modules.groups')
 
 
         self.client_id = config.client_id
