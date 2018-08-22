@@ -22,15 +22,19 @@ class funny:
     async def pizza(self, ctx, member: discord.Member=None):
         '''Give me a pizza'''
         if member==None:
-            member= ctx.author
-        await ctx.send(f':pizza: Here is your pizza {member.mention}! :pizza:')
+            await ctx.send(f':pizza: Here is your pizza {ctx.author.mention}! :pizza:')
+        else:
+            await ctx.send(f':pizza: {ctx.author.mention} give a pizza to {member.mention}! :pizza:')
+        await ctx.message.delete()
 
     @commands.command(hidden=False)
     async def beer(self, ctx, member: discord.Member=None):
         '''Give me a beer'''
         if member==None:
-            member= ctx.author
-        await ctx.send(f':beer: Here is your beer {member.mention}! :beer:')
+            await ctx.send(f':beer: Here is your beer {ctx.author.mention}! :beer:')
+        else:
+            await ctx.send(f':beers: {ctx.author.mention} give a beer to {member.mention}! :beers:')
+        await ctx.message.delete()
 
     @commands.command(hidden=False)
     async def tea(self, ctx, timer=0):
@@ -38,12 +42,7 @@ class funny:
         member = ctx.author
         await sleep(timer*60)
 
-        await ctx.send(f'Your tea is ready {member.mention}!')
-        # async def sendDM(ctx, member):
-        #     print('TEST')
-        #     await ctx.send(f'Your tea is ready {member.mention}!')
-        # job = threading.Timer(timer, sendDM, (ctx, member))
-        # job.start()
+        await ctx.send(f':tea: Your tea is ready {member.mention}! :tea:')
 
 async def on_error(self, event, *args, **kwargs):
     e = discord.Embed(title='Event Error', colour=0xa32952)
