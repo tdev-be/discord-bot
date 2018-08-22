@@ -30,6 +30,7 @@ class Robot(commands.AutoShardedBot):
         self.load_extension('modules.rewards')
         self.load_extension('modules.groups')
         self.load_extension('modules.admin')
+        self.load_extension('modules.poll')
 
 
         self.client_id = config.client_id
@@ -53,7 +54,6 @@ class Robot(commands.AutoShardedBot):
 
     async def on_resumed(self):
         print('resumed...')
-
 
     async def close(self):
         await super().close()
