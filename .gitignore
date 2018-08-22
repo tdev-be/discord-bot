@@ -1,5 +1,5 @@
 .idea
 config.py
 *__pychache__/*
-
+*.pyc
 utils/db/database.db
