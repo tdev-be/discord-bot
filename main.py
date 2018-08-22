@@ -35,7 +35,6 @@ class Robot(commands.AutoShardedBot):
         self.client_id = config.client_id
 
     async def on_error(self, event, *args, **kwargs):
-        import pdb;pdb.set_trace()
         e = discord.Embed(title='Event Error', colour=0xa32952)
         e.add_field(name='Event', value=event)
         e.description = f'```py\n{traceback.format_tb(sys.exc_info()[2])}\n```'
