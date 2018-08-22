@@ -61,7 +61,7 @@ class stats:
 
     @stat.command(hidden=False)
     async def user(self, ctx, user:discord.Member=None):
-        '''Stats per game on thi server'''
+        '''Stats per game on this server'''
         if user == None:
             return
         try:
@@ -83,7 +83,7 @@ class stats:
 
     @stat.command(hidden=False)
     async def topgame(self, ctx, limit=10):
-        '''Stats per game on thi server'''
+        '''Stats per game on this server'''
         list = stats_per_game(ctx.guild.name, ctx)
         values = ''
         for (game, count, time)  in list[0:limit]:
