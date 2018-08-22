@@ -1,6 +1,9 @@
-1. Make sure to get Python 3.5 or higher
+1. Make sure to get Python 3.6 or higher
 
 This is required to actually run the bot.
+
+sudo apt-get install ansible build-essential libssl-dev libffi-dev python-dev
+ansible-playbook -i localhost, python3.6.yml
 
 2. Set up venv
 
