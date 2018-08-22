@@ -29,6 +29,7 @@ class Robot(commands.AutoShardedBot):
         self.load_extension('modules.stats')
         self.load_extension('modules.rewards')
         self.load_extension('modules.groups')
+        self.load_extension('modules.admin')
 
 
         self.client_id = config.client_id
