@@ -21,7 +21,7 @@ def _prefix_callable(bot, msg):
 class Robot(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(command_prefix=_prefix_callable, description=description,
-                         pm_help=None, help_attrs=dict(hidden=True))
+                         pm_help=True, help_attrs=dict(hidden=True))
 
         self.load_extension('modules.utility')
         self.load_extension('modules.funny')
