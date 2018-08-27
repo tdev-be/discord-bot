@@ -35,16 +35,25 @@ class Robot(commands.AutoShardedBot):
 
         self.client_id = config.client_id
 
-    async def on_error(self, event, *args, **kwargs):
-        e = discord.Embed(title='Event Error', colour=0xa32952)
-        e.add_field(name='Event', value=event)
-        e.description = f'```py\n{traceback.format_tb(sys.exc_info()[2])}\n```'
-        e.timestamp = datetime.datetime.utcnow()
-        ch = self.get_channel(LOGGING_CHANNEL)
-        try:
-            await ch.send(embed=e)
-        except:
-            pass
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.NoPrivateMessage):
+            await ctx.author.send('This command cannot be used in private messages.')
+        elif isinstance(error, commands.DisabledCommand):
+            await ctx.author.send('Sorry. This command is disabled and cannot be used.')
+        elif isinstance(error, commands.CommandInvokeError):
+            print(f'In {ctx.command.qualified_name}:', file = sys.stderr)
+            traceback.print_tb(error.original.__traceback__)
+            print(f'{error.original.__class__.__name__}: {error.original}', file = sys.stderr)
+        else:
+            e = discord.Embed(title='Event Error', colour=0xa32952)
+            e.add_field(name='Event', value=error)
+            e.description = f'{ctx.author.mention} in {ctx.channel.mention}'
+            e.timestamp = datetime.datetime.utcnow()
+            ch = self.get_channel(LOGGING_CHANNEL)
+            try:
+                await ch.send(embed=e)
+            except:
+                pass
 
     async def on_ready(self):
         if not hasattr(self, 'uptime'):
