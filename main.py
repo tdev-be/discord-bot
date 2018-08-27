@@ -21,7 +21,7 @@ def _prefix_callable(bot, msg):
 class Robot(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(command_prefix=_prefix_callable, description=description,
-                         pm_help=None, help_attrs=dict(hidden=True))
+                         pm_help=True, help_attrs=dict(hidden=True))
 
         self.load_extension('modules.utility')
         self.load_extension('modules.funny')
@@ -30,6 +30,7 @@ class Robot(commands.AutoShardedBot):
         self.load_extension('modules.rewards')
         self.load_extension('modules.groups')
         self.load_extension('modules.admin')
+        self.load_extension('modules.poll')
 
 
         self.client_id = config.client_id
@@ -53,7 +54,6 @@ class Robot(commands.AutoShardedBot):
 
     async def on_resumed(self):
         print('resumed...')
-
 
     async def close(self):
         await super().close()
